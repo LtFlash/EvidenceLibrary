@@ -61,19 +61,7 @@ namespace EvidenceLibrary
             {
                 case EStages.InterpolateCam:
 
-                    Game.LogVerbose("InterpolateCam._*0*_");
-                    _camera = new Camera(false);
-                    Game.LogVerbose("_1_");
-                    Vector3 camPos = new Vector3(EvidencePosition.X, EvidencePosition.Y, EvidencePosition.Z + 0.25f);
-                    Game.LogVerbose(camPos.ToString());
-                    _camera.Position = camPos;
-                    Game.LogVerbose("_2_");
-                    _camera.PointAtEntity(_object, Vector3.Zero, false);
-                    Game.LogVerbose("_3_");
-                    _camera.Active = true;
-                    Game.LogVerbose("_4_");
-                    CamInterpolate(RetrieveGameCam(), _camera, 3000, true, true, true);
-                    Game.LogVerbose("_5_");
+                    ChangeCamsWithInterpolation();
 
                     stage = EStages.ManipulateItem;
 
@@ -106,6 +94,23 @@ namespace EvidenceLibrary
                 default:
                     break;
             }
+        }
+
+        private void ChangeCamsWithInterpolation()
+        {
+            Game.LogVerbose("InterpolateCam._*0*_");
+            _camera = new Camera(false);
+            Game.LogVerbose("_1_");
+            Vector3 camPos = new Vector3(EvidencePosition.X, EvidencePosition.Y, EvidencePosition.Z + 0.25f);
+            Game.LogVerbose(camPos.ToString());
+            _camera.Position = camPos;
+            Game.LogVerbose("_2_");
+            _camera.PointAtEntity(_object, Vector3.Zero, false);
+            Game.LogVerbose("_3_");
+            _camera.Active = true;
+            Game.LogVerbose("_4_");
+            CamInterpolate(RetrieveGameCam(), _camera, 3000, true, true, true);
+            Game.LogVerbose("_5_");
         }
 
         private void SetCamBack()
