@@ -1,0 +1,7 @@
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\obj\x64\Debug\EvidenceLibrary.csprojResolveAssemblyReference.cache
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\bin\x64\Debug\EvidenceLibrary.dll
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\bin\x64\Debug\EvidenceLibrary.pdb
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\bin\x64\Debug\RagePluginHookSDK.dll
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\bin\x64\Debug\RagePluginHookSDK.xml
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\obj\x64\Debug\EvidenceLibrary.dll
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\obj\x64\Debug\EvidenceLibrary.pdb
