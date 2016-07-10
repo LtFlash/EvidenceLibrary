@@ -104,8 +104,11 @@ namespace EvidenceLibrary
 
             _camera.Position = camPos;
             _camera.PointAtEntity(_object, Vector3.Zero, false);
+
+            Camera gameCam = RetrieveGameCam();
+            gameCam.Active = true;
+            CamInterpolate(gameCam, _camera, 3000, true, true, true);
             _camera.Active = true;
-            CamInterpolate(RetrieveGameCam(), _camera, 3000, true, true, true);
         }
 
         private void SetCamBack()
