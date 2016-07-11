@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rage;
+﻿using Rage;
 using Rage.Native;
 
 namespace EvidenceLibrary
 {
     public class MaterialEvidence : EvidenceBase
     {
+        //PROTECTED
         protected override Vector3 EvidencePosition
         {
             get
@@ -19,9 +15,9 @@ namespace EvidenceLibrary
         }
 
         protected System.Windows.Forms.Keys _keyRotate = System.Windows.Forms.Keys.R;
-        protected System.Windows.Forms.Keys _keyCollect = System.Windows.Forms.Keys.C;
-        protected System.Windows.Forms.Keys _keyLeave = System.Windows.Forms.Keys.L;
-        private Rage.Object _object;
+
+        //PRIVATE
+        private Object _object;
         private Camera _camera;
 
         public MaterialEvidence(string id, string description, Model model, Vector3 position) : base(id, description)
@@ -35,6 +31,7 @@ namespace EvidenceLibrary
             _object.IsPositionFrozen = true;
 
             CreateBlip(_object, BlipSprite.Enemy, System.Drawing.Color.Gray, 0.5f);
+            Game.LogVerbose("MaterialEvidence.Constructor");
         }
 
         private void PlaceObjectOnGround(Rage.Object obj)
@@ -51,7 +48,6 @@ namespace EvidenceLibrary
         {
             InterpolateCam,
             ManipulateItem,
-            CamBack,
         }
         private EStages stage = EStages.InterpolateCam;
 
@@ -61,7 +57,7 @@ namespace EvidenceLibrary
             {
                 case EStages.InterpolateCam:
 
-                    ChangeCamsWithInterpolation();
+                    FocusCamOnObjectWithInterpolation();
 
                     stage = EStages.ManipulateItem;
 
@@ -72,7 +68,7 @@ namespace EvidenceLibrary
 
                     if (Game.IsKeyDown(_keyRotate))
                     {
-                        //rotate
+                        //TODO: rotate object
                     }
                     if (Game.IsKeyDown(_keyCollect))
                     {
@@ -87,7 +83,6 @@ namespace EvidenceLibrary
 
                         SetCamBack();
                         stage = EStages.InterpolateCam;
-                        Game.LogVerbose("MaterialEvidence.keyLeave");
                     }
                     break;
 
@@ -96,7 +91,7 @@ namespace EvidenceLibrary
             }
         }
 
-        private void ChangeCamsWithInterpolation()
+        private void FocusCamOnObjectWithInterpolation()
         {
             _camera = new Camera(false);
             Vector3 camPos = new Vector3(EvidencePosition.X, EvidencePosition.Y, EvidencePosition.Z + 0.25f);

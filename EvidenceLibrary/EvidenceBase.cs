@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rage;
 
 namespace EvidenceLibrary
@@ -12,6 +9,7 @@ namespace EvidenceLibrary
         public string Id { get; private set; }
         public string Description { get; private set; }
         public bool Collected { get; private set; }
+        public bool Checked { get; protected set; }
         public Blip Blip { get; protected set; }
         public virtual bool CanBeActivated
         {
@@ -22,8 +20,11 @@ namespace EvidenceLibrary
         }
 
         protected abstract Vector3 EvidencePosition { get; } //ped, object etc.
-        protected float _distanceEvidenceClose = 2f;
+        protected float _distanceEvidenceClose = 3f;
+
         protected System.Windows.Forms.Keys _keyInteract = System.Windows.Forms.Keys.I;
+        protected System.Windows.Forms.Keys _keyCollect = System.Windows.Forms.Keys.C;
+        protected System.Windows.Forms.Keys _keyLeave = System.Windows.Forms.Keys.L;
 
         //PRIVATE
         private GameFiber _process;
@@ -45,6 +46,7 @@ namespace EvidenceLibrary
         public EvidenceBase(string id, string description)
         {
             Id = id;
+            Description = description;
 
             _process = new GameFiber(InternalProcess);
             _process.Start();
