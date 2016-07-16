@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Rage;
+using Rage.Native;
 
-namespace EvidenceLibrary
+namespace EvidenceLibrary.BaseClasses
 {
     public abstract class EvidenceBase
     {
         public string Id { get; private set; }
         public string Description { get; private set; }
-        public bool Collected { get; private set; }
+        public bool Collected { get; protected set; }
         public bool Checked { get; protected set; }
         public Blip Blip { get; protected set; }
         public virtual bool CanBeActivated
@@ -29,6 +30,8 @@ namespace EvidenceLibrary
         //PRIVATE
         private GameFiber _process;
         private bool _canRun = true;
+        private Camera _camera;
+        private Camera _gameCam;
 
         private List<Stage> _stages = new List<Stage>();
         private class Stage
@@ -161,5 +164,82 @@ namespace EvidenceLibrary
                 GameFiber.Yield();
             }
         }
+
+        protected void FocusCamOnObjectWithInterpolation(Vector3 camPos, Entity pointAt)
+        {
+            _camera = new Camera(false);
+
+            _camera.Position = camPos;
+            _camera.PointAtEntity(pointAt, Vector3.Zero, false);
+
+            _gameCam = RetrieveGameCam();
+            _gameCam.Active = true;
+            CamInterpolate(_gameCam, _camera, 3000, true, true, true);
+            _camera.Active = true;
+        }
+
+        protected void InterpolateCameraBack()
+        {
+            if (_gameCam == null || _camera == null) return;
+
+            CamInterpolate(_camera, _gameCam, 3000, true, true, true);
+
+            _camera.Active = false;
+            _camera.Delete();
+            _camera = null;
+            _gameCam.Delete();
+            _gameCam = null;
+        }
+
+        protected void DisableCustomCam()
+        {
+            Game.FadeScreenOut(1000);
+
+            if (_camera.Exists())
+            {
+                _camera.Active = false;
+                _camera.Delete();
+            }
+
+            Game.FadeScreenIn(1000);
+        }
+
+        private Camera RetrieveGameCam()
+        {
+            Camera gamecam = new Camera(false);
+            gamecam.FOV = NativeFunction.Natives.GET_GAMEPLAY_CAM_FOV<float>();
+            gamecam.Position = NativeFunction.Natives.GET_GAMEPLAY_CAM_COORD<Vector3>();
+            Vector3 rot = NativeFunction.Natives.GET_GAMEPLAY_CAM_ROT<Vector3>(0);
+//doesn't work with Rotator as a return val
+            var rot1 = new Rotator(rot.X, rot.Y, rot.Z);
+            gamecam.Rotation = rot1;
+
+            gamecam.Heading = NativeFunction.Natives.GetGameplayCamRelativeHeading<float>();
+
+            return gamecam;
+        }
+
+        Vector3 RotationToDirection(Vector3 Rotation)
+        {
+            float rotZ = MathHelper.ConvertDegreesToRadians(Rotation.Z);
+            float rotX = MathHelper.ConvertDegreesToRadians(Rotation.X);
+            float multXY = Math.Abs((float)Math.Cos(rotX));
+            Vector3 res;
+            res.X = (float)(-Math.Sin(rotZ)) * multXY;
+            res.Y = (float)(Math.Cos(rotZ)) * multXY;
+            res.Z = (float)(Math.Sin(rotX));
+
+            return res;
+        }
+
+        private void CamInterpolate(Camera camfrom, Camera camto, int totaltime, bool easeLocation, bool easeRotation, bool waitForCompletion, float x = 0f, float y = 0f, float z = 0f)
+        {
+            NativeFunction.Natives.SET_CAM_ACTIVE_WITH_INTERP(camto, camfrom, totaltime, easeLocation, easeRotation);
+            if (waitForCompletion)
+                GameFiber.Sleep(totaltime);
+
+        }
+
+        public abstract void Dismiss();
     }
 }

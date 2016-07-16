@@ -1,6 +1,7 @@
-﻿using Rage;
+﻿using System;
+using Rage;
 
-namespace EvidenceLibrary
+namespace EvidenceLibrary.BaseClasses
 {
     public abstract class EvidencePerson : EvidenceBase
     {
@@ -19,6 +20,16 @@ namespace EvidenceLibrary
             Ped.RandomizeVariation();
             Ped.BlockPermanentEvents = true;
             CreateBlip(Ped, BlipSprite.Enemy, System.Drawing.Color.Green, 0.25f);
+        }
+
+        protected override void End()
+        {
+            Ped?.Dismiss();
+        }
+
+        public override void Dismiss()
+        {
+            End();
         }
     }
 }

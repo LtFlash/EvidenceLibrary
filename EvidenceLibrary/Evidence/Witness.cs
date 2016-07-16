@@ -1,6 +1,7 @@
 ﻿using Rage;
+using EvidenceLibrary.BaseClasses;
 
-namespace EvidenceLibrary
+namespace EvidenceLibrary.Evidence
 {
     public class Witness : EvidencePerson
     {

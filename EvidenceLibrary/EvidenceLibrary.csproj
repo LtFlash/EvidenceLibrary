@@ -64,20 +64,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseClasses\EvidenceObject.cs" />
+    <Compile Include="Evidence\DeadBody.cs" />
     <Compile Include="Dialog.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="EvidenceBase.cs" />
-    <Compile Include="EvidenceBody.cs" />
-    <Compile Include="EvidencePerson.cs" />
+    <Compile Include="BaseClasses\EvidenceBase.cs" />
+    <Compile Include="BaseClasses\EvidenceBody.cs" />
+    <Compile Include="BaseClasses\EvidencePerson.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="MaterialEvidence.cs" />
+    <Compile Include="Evidence\Object.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs.cs" />
-    <Compile Include="Witness.cs" />
+    <Compile Include="Evidence\Witness.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Concepts.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetPath)" "D:\Software\Rockstar Games\Grand Theft Auto V\$(TargetFileName)"</PostBuildEvent>
