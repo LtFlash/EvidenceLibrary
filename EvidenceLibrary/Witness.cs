@@ -2,27 +2,13 @@
 
 namespace EvidenceLibrary
 {
-    public class Witness : EvidenceBase
+    public class Witness : EvidencePerson
     {
-        public Ped Ped { get; protected set; }
-
-        protected override Vector3 EvidencePosition
-        {
-            get
-            {
-                return (Ped?.Position).GetValueOrDefault(Vector3.Zero);
-            }
-        }
         private Dialog _dialog;
 
-        public Witness(string id, string description, SpawnPoint spawn, Model model, string[] dialog) : base(id, description)
+        public Witness(string id, string description, SpawnPoint spawn, Model model, string[] dialog) : base(id, description, spawn, model)
         {
-            Ped = new Ped(model, spawn.Position, spawn.Heading);
-            Ped.BlockPermanentEvents = true;
-            CreateBlip(Ped, BlipSprite.Enemy, System.Drawing.Color.Green, 0.25f);
-
             _dialog = new Dialog(dialog);
-            Game.LogVerbose("Witness.Constructor");
         }
 
         protected override void DisplayInfoInteractWithEvidence()
@@ -67,6 +53,8 @@ namespace EvidenceLibrary
 
                     if(Game.IsKeyDown(_keyInteract))
                     {
+                        SetEvidenceCollected();
+
                         Ped.Tasks.Wander();
                         _state = EState.InitDialog;
                     }
@@ -78,7 +66,6 @@ namespace EvidenceLibrary
                     {
                         //transport
                     }
-                    SetEvidenceCollected();
 
                     break;
                 default:

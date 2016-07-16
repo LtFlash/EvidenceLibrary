@@ -1,0 +1,7 @@
+﻿ * EvidenceBase
+  - EvidencePerson
+   + Witness
+   + Victim: DOA/unconscious
+
+  - MaterialEvidence
+   + object

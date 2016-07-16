@@ -90,7 +90,8 @@ namespace EvidenceLibrary
                     break;
             }
         }
-
+        //TODO: move to EvidenceBase
+        //TODO: params of camPos to use with other type of evidence
         private void FocusCamOnObjectWithInterpolation()
         {
             _camera = new Camera(false);
