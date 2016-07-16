@@ -5,7 +5,7 @@ using Rage.Native;
 
 namespace EvidenceLibrary.BaseClasses
 {
-    public abstract class EvidenceBase
+    public abstract class EvidenceBase : IHandleable
     {
         public string Id { get; private set; }
         public string Description { get; private set; }
@@ -20,7 +20,14 @@ namespace EvidenceLibrary.BaseClasses
             }
         }
 
-        protected abstract Vector3 EvidencePosition { get; } //ped, object etc.
+        protected abstract Vector3 EvidencePosition { get; }
+
+        public abstract PoolHandle Handle
+        {
+            get;
+        }
+
+        protected abstract Entity EvidenceEntity { get; }
         protected float _distanceEvidenceClose = 3f;
 
         protected System.Windows.Forms.Keys _keyInteract = System.Windows.Forms.Keys.I;
@@ -65,17 +72,17 @@ namespace EvidenceLibrary.BaseClasses
             ActivateStage(AwayOrClose);
         }
 
-        protected void CreateBlip(Entity attachTo, BlipSprite sprite, System.Drawing.Color color, float scale)
+        public void CreateBlip(System.Drawing.Color color, BlipSprite sprite = BlipSprite.Health, float scale = 0.25f)
         {
             RemoveBlip();
 
-            Blip = new Blip(attachTo);
+            Blip = new Blip(EvidenceEntity);
             Blip.Sprite = sprite;
             Blip.Color = color;
             Blip.Scale = scale;
         }
 
-        protected void RemoveBlip()
+        public void RemoveBlip()
         {
             if (Blip.Exists()) Blip.Delete();
         }
@@ -154,9 +161,6 @@ namespace EvidenceLibrary.BaseClasses
         {
             //is close -> press key -> process -> collect -> that's it
             //is close -> press key -> process -> leave ->
-
-            //abstract CameraMovement()?
-
             while(_canRun)
             {
                 ExecStages();
@@ -176,6 +180,22 @@ namespace EvidenceLibrary.BaseClasses
             _gameCam.Active = true;
             CamInterpolate(_gameCam, _camera, 3000, true, true, true);
             _camera.Active = true;
+
+            FreezePlayer(true);
+        }
+
+        private void FreezePlayer(bool on)
+        {
+            NativeFunction.Natives.FreezeEntityPosition(Game.LocalPlayer.Character, on);
+
+            if(on)
+            {
+                Game.LocalPlayer.Character.IsInvincible = true;
+            }
+            else
+            {
+                Game.LocalPlayer.Character.IsInvincible = false;
+            }
         }
 
         protected void InterpolateCameraBack()
@@ -189,6 +209,8 @@ namespace EvidenceLibrary.BaseClasses
             _camera = null;
             _gameCam.Delete();
             _gameCam = null;
+
+            FreezePlayer(false);
         }
 
         protected void DisableCustomCam()
@@ -202,6 +224,8 @@ namespace EvidenceLibrary.BaseClasses
             }
 
             Game.FadeScreenIn(1000);
+
+            FreezePlayer(false);
         }
 
         private Camera RetrieveGameCam()
@@ -240,6 +264,18 @@ namespace EvidenceLibrary.BaseClasses
 
         }
 
-        public abstract void Dismiss();
+        public virtual void Dismiss()
+        {
+            RemoveBlip();
+            _canRun = false;
+            _process.Abort();
+        }
+
+        public abstract bool IsValid();
+
+        public bool Equals(IHandleable other)
+        {
+            return ReferenceEquals(other, this);
+        }
     }
 }

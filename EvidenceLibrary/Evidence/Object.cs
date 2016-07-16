@@ -71,7 +71,7 @@ namespace EvidenceLibrary.Evidence
 
         protected override void End()
         {
-            _object?.Delete();
+            if(_object.Exists()) _object.Delete();
             RemoveBlip();
         }
     }

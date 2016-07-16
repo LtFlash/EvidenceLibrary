@@ -1,4 +1,5 @@
-﻿using Rage;
+﻿using System;
+using Rage;
 using Rage.Native;
 
 namespace EvidenceLibrary.BaseClasses
@@ -13,6 +14,21 @@ namespace EvidenceLibrary.BaseClasses
                 return (_object?.Position).GetValueOrDefault(Vector3.Zero);
             }
         }
+        public override PoolHandle Handle
+        {
+            get
+            {
+                return (_object?.Handle).GetValueOrDefault();
+            }
+        }
+
+        protected override Entity EvidenceEntity
+        {
+            get
+            {
+                return _object;
+            }
+        }
 
         public EvidenceObject(string id, string description, Model model, Vector3 position) : base(id, description)
         {
@@ -23,8 +39,6 @@ namespace EvidenceLibrary.BaseClasses
             NativeFunction.CallByName<uint>("SET_ENTITY_HAS_GRAVITY", _object, true);
             GameFiber.Sleep(3000);
             _object.IsPositionFrozen = true;
-
-            CreateBlip(_object, BlipSprite.Enemy, System.Drawing.Color.Gray, 0.5f);
         }
 
         private void PlaceObjectOnGround(Rage.Object obj)
@@ -35,7 +49,13 @@ namespace EvidenceLibrary.BaseClasses
 
         public override void Dismiss()
         {
-            _object?.Dismiss();
+            if(_object.Exists()) _object.Dismiss();
+            base.Dismiss();
+        }
+
+        public override bool IsValid()
+        {
+            return _object != null && _object.IsValid();
         }
     }
 }

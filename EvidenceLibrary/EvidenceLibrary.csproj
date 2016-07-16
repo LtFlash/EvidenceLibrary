@@ -71,6 +71,7 @@
     <Compile Include="BaseClasses\EvidenceBase.cs" />
     <Compile Include="BaseClasses\EvidenceBody.cs" />
     <Compile Include="BaseClasses\EvidencePerson.cs" />
+    <Compile Include="Evidence\FirstOfficer.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Evidence\Object.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

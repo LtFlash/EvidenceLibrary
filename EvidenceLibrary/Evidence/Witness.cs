@@ -45,28 +45,7 @@ namespace EvidenceLibrary.Evidence
                     break;
                 case EState.WaitForFurtherInstructions:
 
-                    if (!CanBeActivated) return;
-
-                    Game.DisplayHelp($"Press ~y~{_keyInteract} ~s~to release the witness.~n~Press ~y~{_keyLeave} ~s~to tell the witness to stay at scene.~n~Press ~y~{_keyCollect} ~s~to transport the witness to the station.");
-                    
-                    //release -> done
-                    //tell to stay -> set Checked to true and set state to WaitFor... in the next contact?
-
-                    if(Game.IsKeyDown(_keyInteract))
-                    {
-                        SetEvidenceCollected();
-
-                        Ped.Tasks.Wander();
-                        _state = EState.InitDialog;
-                    }
-                    else if(Game.IsKeyDown(_keyLeave))
-                    {
-                        SwapStages(Process, AwayOrClose);
-                    }
-                    else if(Game.IsKeyDown(_keyCollect))
-                    {
-                        //transport
-                    }
+                    WaitForFurtherInstruction(); 
 
                     break;
                 default:
@@ -86,6 +65,34 @@ namespace EvidenceLibrary.Evidence
             //    seems unreleated
         }
 
+        protected virtual void WaitForFurtherInstruction()
+        {
+            if (!CanBeActivated) return;
+
+            Game.DisplayHelp($"Press ~y~{_keyInteract} ~s~to release the witness.~n~Press ~y~{_keyLeave} ~s~to tell the witness to stay at scene.~n~Press ~y~{_keyCollect} ~s~to transport the witness to the station.");
+
+            //release -> done
+            //tell to stay -> set Checked to true and set state to WaitFor... in the next contact?
+
+            if (Game.IsKeyDown(_keyInteract))
+            {
+                SetEvidenceCollected();
+
+                Ped.Tasks.Wander();
+                Game.LogVerbose("Witness.Process.ReleaseWitness");
+            }
+            else if (Game.IsKeyDown(_keyLeave))
+            {
+                _state = EState.CheckIfDialogFinished; //prevent from reading _keyInteract 2x -> releasing the suspect
+                SwapStages(Process, AwayOrClose);
+                Game.LogVerbose("Witness.Process.WitnessStay");
+            }
+            else if (Game.IsKeyDown(_keyCollect))
+            {
+                //transport
+            }
+        }
+
         protected override void DisplayInfoEvidenceCollected()
         {
 
@@ -93,7 +100,7 @@ namespace EvidenceLibrary.Evidence
 
         protected override void End()
         {
-            Ped.Dismiss();
+            if(Ped.Exists()) Ped.Dismiss();
         }
     }
 }
