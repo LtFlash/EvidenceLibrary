@@ -31,7 +31,7 @@ namespace EvidenceLibrary.Evidence
                     Vector3 camPos = new Vector3(EvidencePosition.X, EvidencePosition.Y, EvidencePosition.Z + 0.25f);
 
                     FocusCamOnObjectWithInterpolation(camPos, _object);
-
+                    Checked = true;
                     stage = EStages.ManipulateItem;
 
                     break;

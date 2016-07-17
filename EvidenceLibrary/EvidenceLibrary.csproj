@@ -77,6 +77,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs.cs" />
     <Compile Include="Evidence\Witness.cs" />
+    <Compile Include="Transport.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Concepts.txt" />

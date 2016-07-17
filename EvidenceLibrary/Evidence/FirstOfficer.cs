@@ -5,7 +5,7 @@ namespace EvidenceLibrary.Evidence
     public class FirstOfficer : Witness
     {
         public FirstOfficer(string id, string description, SpawnPoint spawn, string[] dialog, string model = "s_m_y_cop_01")
-            : base(id, description, spawn, model, dialog)
+            : base(id, description, spawn, model, dialog, Vector3.Zero)
         {
                 
         }

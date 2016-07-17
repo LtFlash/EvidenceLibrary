@@ -6,16 +6,19 @@ namespace EvidenceLibrary.Evidence
     public class Witness : EvidencePerson
     {
         private Dialog _dialog;
+        private Transport _witnessTransport;
+        private Vector3 _pickupPos;
 
-        public Witness(string id, string description, SpawnPoint spawn, Model model, string[] dialog) : base(id, description, spawn, model)
+        public Witness(string id, string description, SpawnPoint spawn, Model model, string[] dialog, Vector3 pickupPos) : base(id, description, spawn, model)
         {
             _dialog = new Dialog(dialog);
+            _pickupPos = pickupPos;
         }
 
         protected override void DisplayInfoInteractWithEvidence()
         {
             Game.DisplayHelp($"Press ~y~{_keyInteract} ~s~to talk to the witness.", 100);
-        }
+        } 
 
         private enum EState
         {
@@ -40,6 +43,8 @@ namespace EvidenceLibrary.Evidence
                 case EState.CheckIfDialogFinished:
                     if(_dialog.HasEnded)
                     {
+                        Checked = true;
+                        Collected = true;
                         _state = EState.WaitForFurtherInstructions;
                     }
                     break;
@@ -90,6 +95,8 @@ namespace EvidenceLibrary.Evidence
             else if (Game.IsKeyDown(_keyCollect))
             {
                 //transport
+                SetEvidenceCollected();
+                _witnessTransport = new Transport(Ped, _pickupPos);
             }
         }
 
@@ -100,7 +107,7 @@ namespace EvidenceLibrary.Evidence
 
         protected override void End()
         {
-            if(Ped.Exists()) Ped.Dismiss();
+            //if(Ped.Exists()) Ped.Dismiss();
         }
     }
 }

@@ -234,7 +234,7 @@ namespace EvidenceLibrary.BaseClasses
             gamecam.FOV = NativeFunction.Natives.GET_GAMEPLAY_CAM_FOV<float>();
             gamecam.Position = NativeFunction.Natives.GET_GAMEPLAY_CAM_COORD<Vector3>();
             Vector3 rot = NativeFunction.Natives.GET_GAMEPLAY_CAM_ROT<Vector3>(0);
-//doesn't work with Rotator as a return val
+            //doesn't work with Rotator as a return val
             var rot1 = new Rotator(rot.X, rot.Y, rot.Z);
             gamecam.Rotation = rot1;
 
