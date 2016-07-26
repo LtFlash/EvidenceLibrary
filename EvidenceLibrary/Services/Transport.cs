@@ -1,8 +1,8 @@
 ﻿using Rage;
 
-namespace EvidenceLibrary
+namespace EvidenceLibrary.Services
 {
-    internal class Transport
+    public class Transport
     {
         private Vehicle _policeCar;
         private readonly string[] _policeCarModels = new string[]

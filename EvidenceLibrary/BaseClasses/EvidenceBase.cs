@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Rage;
 using Rage.Native;
+using System.Media;
+using System.IO;
 
 namespace EvidenceLibrary.BaseClasses
 {
@@ -11,7 +13,34 @@ namespace EvidenceLibrary.BaseClasses
         public string Description { get; private set; }
         public bool Collected { get; protected set; }
         public bool Checked { get; protected set; }
+        public bool IsImportant { get; set; }
+        public bool PlaySound
+        {
+            set
+            {
+                if (value) ActivateStage(PlaySoundEvidenceNearby);
+                else DeactivateStage(PlaySoundEvidenceNearby);
+            }
+        }
+        //private SoundPlayer _soundEvidenceFound = new SoundPlayer(@".\Plugins\EvidenceLibrary\Sounds\EvidenceNearby.wav");
+        private SoundPlayer _soundEvidenceNearby = new SoundPlayer(Properties.Resources.EvidenceNearby);
+
+        public List<ETraces> Traces { get; } = new List<ETraces>();
+
         public Blip Blip { get; protected set; }
+
+        public float DistanceCanBeActivated
+        {
+            get
+            {
+                return _distanceEvidenceClose;
+            }
+            set
+            {
+                _distanceEvidenceClose = value;
+            }
+        }
+
         public virtual bool CanBeActivated
         {
             get
@@ -20,7 +49,7 @@ namespace EvidenceLibrary.BaseClasses
             }
         }
 
-        protected abstract Vector3 EvidencePosition { get; }
+        public abstract Vector3 EvidencePosition { get; }
 
         public abstract PoolHandle Handle
         {
@@ -39,6 +68,7 @@ namespace EvidenceLibrary.BaseClasses
         private bool _canRun = true;
         private Camera _camera;
         private Camera _gameCam;
+        private bool _prevState_CanBeActivated = false; // to play sounds
 
         private List<Stage> _stages = new List<Stage>();
         private class Stage
@@ -69,7 +99,40 @@ namespace EvidenceLibrary.BaseClasses
             AddStage(Process);
             AddStage(InternalEnd);
 
+            AddStage(PlaySoundEvidenceNearby);
+            ActivateStage(PlaySoundEvidenceNearby);
+
             ActivateStage(AwayOrClose);
+        }
+        
+        private void PlaySoundEvidenceNearby()
+        {
+            if(HasStateChanged(ref _prevState_CanBeActivated, CanBeActivated))
+            {
+                if(CanBeActivated) 
+                {
+                    _soundEvidenceNearby.Play();
+                    Game.LogVerbose("EvidenceBase.PlaySoundEvidenceNearby");
+                    //PlaySound()
+                    //using (var audioStream = new MemoryStream(Properties.Resources.EvidenceNearby))
+                    //{
+                    //    using (var player = new SoundPlayer(audioStream))
+                    //    {
+                    //        player.Play();
+                    //    }
+                    //}
+                }
+            }
+        }
+
+        private bool HasStateChanged(ref bool previous, bool current)
+        {
+            if (current == previous) return false;
+            else
+            {
+                previous = current;
+                return true;
+            }
         }
 
         public void CreateBlip(System.Drawing.Color color, BlipSprite sprite = BlipSprite.Health, float scale = 0.25f)
@@ -181,21 +244,14 @@ namespace EvidenceLibrary.BaseClasses
             CamInterpolate(_gameCam, _camera, 3000, true, true, true);
             _camera.Active = true;
 
-            FreezePlayer(true);
+            SetLocalPlayerPropertiesWhileCamOn(true);
         }
 
-        private void FreezePlayer(bool on)
+        private void SetLocalPlayerPropertiesWhileCamOn(bool on)
         {
             NativeFunction.Natives.FreezeEntityPosition(Game.LocalPlayer.Character, on);
 
-            if(on)
-            {
-                Game.LocalPlayer.Character.IsInvincible = true;
-            }
-            else
-            {
-                Game.LocalPlayer.Character.IsInvincible = false;
-            }
+            Game.LocalPlayer.Character.IsInvincible = on;
         }
 
         protected void InterpolateCameraBack()
@@ -210,7 +266,7 @@ namespace EvidenceLibrary.BaseClasses
             _gameCam.Delete();
             _gameCam = null;
 
-            FreezePlayer(false);
+            SetLocalPlayerPropertiesWhileCamOn(false);
         }
 
         protected void DisableCustomCam()
@@ -225,7 +281,7 @@ namespace EvidenceLibrary.BaseClasses
 
             Game.FadeScreenIn(1000);
 
-            FreezePlayer(false);
+            SetLocalPlayerPropertiesWhileCamOn(false);
         }
 
         private Camera RetrieveGameCam()
@@ -243,29 +299,15 @@ namespace EvidenceLibrary.BaseClasses
             return gamecam;
         }
 
-        Vector3 RotationToDirection(Vector3 Rotation)
-        {
-            float rotZ = MathHelper.ConvertDegreesToRadians(Rotation.Z);
-            float rotX = MathHelper.ConvertDegreesToRadians(Rotation.X);
-            float multXY = Math.Abs((float)Math.Cos(rotX));
-            Vector3 res;
-            res.X = (float)(-Math.Sin(rotZ)) * multXY;
-            res.Y = (float)(Math.Cos(rotZ)) * multXY;
-            res.Z = (float)(Math.Sin(rotX));
-
-            return res;
-        }
-
         private void CamInterpolate(Camera camfrom, Camera camto, int totaltime, bool easeLocation, bool easeRotation, bool waitForCompletion, float x = 0f, float y = 0f, float z = 0f)
         {
             NativeFunction.Natives.SET_CAM_ACTIVE_WITH_INTERP(camto, camfrom, totaltime, easeLocation, easeRotation);
-            if (waitForCompletion)
-                GameFiber.Sleep(totaltime);
-
+            if (waitForCompletion) GameFiber.Sleep(totaltime);
         }
 
         public virtual void Dismiss()
         {
+            Game.LogVerbose("EvidenceBase.Dismiss()");
             RemoveBlip();
             _canRun = false;
             _process.Abort();

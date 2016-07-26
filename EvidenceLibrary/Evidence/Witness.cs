@@ -1,18 +1,30 @@
 ﻿using Rage;
 using EvidenceLibrary.BaseClasses;
+using LSPD_First_Response.Mod.API;
 
 namespace EvidenceLibrary.Evidence
 {
-    public class Witness : EvidencePerson
+    public class Witness : EvidencePed
     {
+        public bool IsArrested { get; protected set; }
+        public bool IsCompliant { get; set; }
+        public string[] DialogRefuseTransportToStation { get; set; }
+
         private Dialog _dialog;
-        private Transport _witnessTransport;
+        private Services.Transport _witnessTransport;
         private Vector3 _pickupPos;
+        private string[] _dialogRefuseBeingTransported = new string[]
+        {
+            "No way, I'm not going to get involved!",
+            "I'd be dead in 12 hours!",
+        };
 
         public Witness(string id, string description, SpawnPoint spawn, Model model, string[] dialog, Vector3 pickupPos) : base(id, description, spawn, model)
         {
             _dialog = new Dialog(dialog);
             _pickupPos = pickupPos;
+
+            DialogRefuseTransportToStation = _dialogRefuseBeingTransported;
         }
 
         protected override void DisplayInfoInteractWithEvidence()
@@ -30,6 +42,17 @@ namespace EvidenceLibrary.Evidence
 
         protected override void Process()
         {
+            if(!Ped)
+            {
+                Dismiss();
+            }
+
+            if(Functions.IsPedArrested(Ped))
+            {
+                IsArrested = true;
+                Dismiss(); //TODO: test if doesn't 'cancel' the arrest state
+            }
+
             switch (_state)
             {
                 case EState.InitDialog:
@@ -56,18 +79,6 @@ namespace EvidenceLibrary.Evidence
                 default:
                     break;
             }
-
-
-            //start dialog -> check for end -> set as collected -> set ped's task to wander?
-
-            //ability to send a victim to a station to make an official statement == 'collect evidence'?
-            //it would need a 'transport' class: responding RMP picks up a witness and transport him
-
-            //options:
-            // 1. release witness
-            // 2. send witness to the station house
-            // 3. tell witness to stay on scene == 'checked but not collected' when his testimony
-            //    seems unreleated
         }
 
         protected virtual void WaitForFurtherInstruction()
@@ -84,19 +95,28 @@ namespace EvidenceLibrary.Evidence
                 SetEvidenceCollected();
 
                 Ped.Tasks.Wander();
-                Game.LogVerbose("Witness.Process.ReleaseWitness");
             }
             else if (Game.IsKeyDown(_keyLeave))
             {
                 _state = EState.CheckIfDialogFinished; //prevent from reading _keyInteract 2x -> releasing the suspect
                 SwapStages(Process, AwayOrClose);
-                Game.LogVerbose("Witness.Process.WitnessStay");
             }
             else if (Game.IsKeyDown(_keyCollect))
             {
-                //transport
-                SetEvidenceCollected();
-                _witnessTransport = new Transport(Ped, _pickupPos);
+                if (IsCompliant)
+                {
+                    SetEvidenceCollected();
+                    _witnessTransport = new Services.Transport(Ped, _pickupPos);
+                }
+                else
+                {
+                    Dialog refuseBeingTransported = new Dialog(DialogRefuseTransportToStation);
+                    refuseBeingTransported.StartDialog();
+                    while(!refuseBeingTransported.HasEnded)
+                    {
+                        GameFiber.Yield();
+                    }
+                }
             }
         }
 

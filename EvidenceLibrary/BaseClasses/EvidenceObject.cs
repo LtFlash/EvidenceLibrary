@@ -7,18 +7,20 @@ namespace EvidenceLibrary.BaseClasses
     public abstract class EvidenceObject : EvidenceBase
     {
         protected Rage.Object _object;
-        protected override Vector3 EvidencePosition
+
+        public override Vector3 EvidencePosition
         {
             get
             {
-                return (_object?.Position).GetValueOrDefault(Vector3.Zero);
+                return _object ? _object.Position : Vector3.Zero;
             }
         }
+
         public override PoolHandle Handle
         {
             get
             {
-                return (_object?.Handle).GetValueOrDefault();
+                return _object ? _object.Handle : new PoolHandle();
             }
         }
 
@@ -49,13 +51,13 @@ namespace EvidenceLibrary.BaseClasses
 
         public override void Dismiss()
         {
-            if(_object.Exists()) _object.Dismiss();
+            if(_object) _object.Dismiss();
             base.Dismiss();
         }
 
         public override bool IsValid()
         {
-            return _object != null && _object.IsValid();
+            return _object;
         }
     }
 }

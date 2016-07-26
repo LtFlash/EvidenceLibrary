@@ -2,32 +2,26 @@
 
 namespace EvidenceLibrary
 {
+    //TODO: remove first from a List<string> instead of using index?
     public class Dialog
     {
-        private Ped _ped1;
-        private Ped _ped2;
+        public bool HasEnded { get; private set; }
+
+        //use to play anims?
+        //private Ped _ped1;
+        //private Ped _ped2;
+
+        //TODO: properties to change times
+        private const int TIME_LINE = 2500;
+        private const int TIME_LINE_PAUSE = 3000;
 
         private string[] _dialog;
-        private bool bEnded = false;
         private int timeTimer = TIME_LINE_PAUSE;
         private int timeLine = TIME_LINE;
         private System.Timers.Timer _timer;
          
         private int _currentLine = 0; 
         private int _linesInDialog;
-
-        private const int TIME_LINE = 2500;
-        private const int TIME_LINE_PAUSE = 3000;
-
-        public bool HasEnded
-        {
-            get { return bEnded; }
-        }
-
-        private enum EState
-        {
-            Init
-        };
 
         public Dialog(string[] dialog)
         {
@@ -64,23 +58,24 @@ namespace EvidenceLibrary
 
         private void ShowLine()
         {
-            Game.DisplaySubtitle(_dialog[_currentLine], timeLine);
-            _currentLine++;
-
-            if (_currentLine == _linesInDialog)
+            GameFiber.StartNew(delegate
             {
-                _timer.Stop();
-                End();
-            }
+                Game.DisplaySubtitle(_dialog[_currentLine], timeLine);
+                //Game.LogVerbose($"Dialog.ShowLine.Line: {_currentLine}, text: {_dialog[_currentLine]}");
+             
+                _currentLine++;
+
+                if (_currentLine == _linesInDialog) 
+                {
+                    _timer.Stop();
+                    End();
+                }
+            });
         }
 
         private void End()
         {
-            bEnded = true;
-        }
-
-        private void Process()
-        {
+            HasEnded = true;
         }
     }
 }

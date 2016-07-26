@@ -18,5 +18,9 @@ namespace EvidenceLibrary
                 return new SpawnPoint(0.0f, Vector3.Zero);
             }
         }
+        public float Distance(SpawnPoint spawn)
+        {
+            return Vector3.Distance(Position, spawn.Position);
+        }
     };
 }

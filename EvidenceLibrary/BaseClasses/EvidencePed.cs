@@ -1,23 +1,24 @@
-﻿using System;
-using Rage;
+﻿using Rage;
 
 namespace EvidenceLibrary.BaseClasses
 {
-    public abstract class EvidencePerson : EvidenceBase
+    public abstract class EvidencePed : EvidenceBase
     {
         public Ped Ped { get; protected set; }
-        protected override Vector3 EvidencePosition
+
+        public override Vector3 EvidencePosition
         {
             get
             {
-                return (Ped?.Position).GetValueOrDefault(Vector3.Zero);
+                return Ped ? Ped.Position : Vector3.Zero;
             }
         }
+
         public override PoolHandle Handle
         {
             get
             {
-                return (Ped?.Handle).GetValueOrDefault();
+                return Ped ? Ped.Handle : new PoolHandle();
             }
         }
 
@@ -29,7 +30,7 @@ namespace EvidenceLibrary.BaseClasses
             }
         }
 
-        public EvidencePerson(string id, string description, SpawnPoint spawn, Model model) : base(id, description)
+        public EvidencePed(string id, string description, SpawnPoint spawn, Model model) : base(id, description)
         {
             Ped = new Ped(model, spawn.Position, spawn.Heading);
             Ped.RandomizeVariation();
@@ -38,18 +39,19 @@ namespace EvidenceLibrary.BaseClasses
 
         protected override void End()
         {
-            Ped?.Dismiss();
+            if(Ped) Ped.Dismiss();
         }
 
         public override void Dismiss()
         {
+            Game.LogVerbose("EvidencePerson.Dismiss()");
             End();
             base.Dismiss();
         }
 
         public override bool IsValid()
         {
-            return Ped != null && Ped.IsValid();
+            return Ped;
         }
     }
 }

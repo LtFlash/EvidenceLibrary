@@ -1,5 +1,6 @@
 ﻿using Rage;
 using EvidenceLibrary.BaseClasses;
+
 namespace EvidenceLibrary.Evidence
 {
     public class Object : EvidenceObject
@@ -7,7 +8,8 @@ namespace EvidenceLibrary.Evidence
         //PROTECTED
         protected System.Windows.Forms.Keys _keyRotate = System.Windows.Forms.Keys.R;
 
-        public Object(string id, string description, Model model, Vector3 position) : base(id, description, model, position)
+        public Object(string id, string description, Model model, Vector3 position) :
+            base(id, description, model, position)
         {
         }
 
@@ -71,7 +73,7 @@ namespace EvidenceLibrary.Evidence
 
         protected override void End()
         {
-            if(_object.Exists()) _object.Delete();
+            if(_object) _object.Delete();
             RemoveBlip();
         }
     }

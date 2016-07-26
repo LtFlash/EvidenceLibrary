@@ -5,3 +5,8 @@ D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\bin\x64\Debug\RagePluginHook
 D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\bin\x64\Debug\RagePluginHookSDK.xml
 D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\obj\x64\Debug\EvidenceLibrary.dll
 D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\obj\x64\Debug\EvidenceLibrary.pdb
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\bin\x64\Debug\LSPD First Response.dll
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\bin\x64\Debug\LMS.Common.dll
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\bin\x64\Debug\LSPD First Response.pdb
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\obj\x64\Debug\EvidenceLibrary.Properties.Resources.resources
+D:\Misc\Programming\EvidenceLibrary\EvidenceLibrary\obj\x64\Debug\EvidenceLibrary.csproj.GenerateResource.Cache

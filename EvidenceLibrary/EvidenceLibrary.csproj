@@ -49,6 +49,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LSPD First Response">
+      <HintPath>..\..\..\..\Software\Rockstar Games\Grand Theft Auto V\Plugins\LSPD First Response.dll</HintPath>
+    </Reference>
     <Reference Include="RagePluginHookSDK">
       <HintPath>..\..\..\..\Software\Rockstar Games\Grand Theft Auto V\SDK\RagePluginHookSDK.dll</HintPath>
     </Reference>
@@ -65,24 +68,39 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseClasses\EvidenceObject.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Aggregator.cs" />
+    <Compile Include="Resources\MedicalCenters.cs" />
+    <Compile Include="Resources\PoliceStations.cs" />
+    <Compile Include="Services\EMS.cs" />
     <Compile Include="Evidence\DeadBody.cs" />
     <Compile Include="Dialog.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="BaseClasses\EvidenceBase.cs" />
     <Compile Include="BaseClasses\EvidenceBody.cs" />
-    <Compile Include="BaseClasses\EvidencePerson.cs" />
+    <Compile Include="BaseClasses\EvidencePed.cs" />
     <Compile Include="Evidence\FirstOfficer.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Evidence\Object.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs.cs" />
     <Compile Include="Evidence\Witness.cs" />
-    <Compile Include="Transport.cs" />
+    <Compile Include="Services\Transport.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Concepts.txt" />
+    <None Include="Resources\EvidenceNearby.wav" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetPath)" "D:\Software\Rockstar Games\Grand Theft Auto V\$(TargetFileName)"</PostBuildEvent>
