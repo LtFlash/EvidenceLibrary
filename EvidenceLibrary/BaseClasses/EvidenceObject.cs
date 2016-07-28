@@ -8,7 +8,7 @@ namespace EvidenceLibrary.BaseClasses
     {
         protected Rage.Object _object;
 
-        public override Vector3 EvidencePosition
+        public override Vector3 Position
         {
             get
             {

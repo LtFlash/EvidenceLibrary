@@ -29,7 +29,7 @@ namespace EvidenceLibrary.Evidence
 
         protected override void DisplayInfoInteractWithEvidence()
         {
-            Game.DisplayHelp($"Press ~y~{_keyInteract} ~s~to talk to the witness.", 100);
+            Game.DisplayHelp($"Press ~y~{KeyInteract} ~s~to talk to the witness.", 100);
         } 
 
         private enum EState
@@ -85,23 +85,23 @@ namespace EvidenceLibrary.Evidence
         {
             if (!CanBeActivated) return;
 
-            Game.DisplayHelp($"Press ~y~{_keyInteract} ~s~to release the witness.~n~Press ~y~{_keyLeave} ~s~to tell the witness to stay at scene.~n~Press ~y~{_keyCollect} ~s~to transport the witness to the station.");
+            Game.DisplayHelp($"Press ~y~{KeyInteract} ~s~to release the witness.~n~Press ~y~{KeyLeave} ~s~to tell the witness to stay at scene.~n~Press ~y~{KeyCollect} ~s~to transport the witness to the station.");
 
             //release -> done
             //tell to stay -> set Checked to true and set state to WaitFor... in the next contact?
 
-            if (Game.IsKeyDown(_keyInteract))
+            if (Game.IsKeyDown(KeyInteract))
             {
                 SetEvidenceCollected();
 
                 Ped.Tasks.Wander();
             }
-            else if (Game.IsKeyDown(_keyLeave))
+            else if (Game.IsKeyDown(KeyLeave))
             {
                 _state = EState.CheckIfDialogFinished; //prevent from reading _keyInteract 2x -> releasing the suspect
                 SwapStages(Process, AwayOrClose);
             }
-            else if (Game.IsKeyDown(_keyCollect))
+            else if (Game.IsKeyDown(KeyCollect))
             {
                 if (IsCompliant)
                 {

@@ -16,7 +16,7 @@ namespace EvidenceLibrary.BaseClasses
 
         protected override void DisplayInfoInteractWithEvidence()
         {
-            Game.DisplayHelp($"Press ~y~{_keyInteract}~s~ to inspect the body.", 100);
+            Game.DisplayHelp($"Press ~y~{KeyInteract}~s~ to inspect the body.", 100);
         }
 
         private enum EState
@@ -39,7 +39,7 @@ namespace EvidenceLibrary.BaseClasses
             {
                 case EState.InterpolateCam:
 
-                    Vector3 camPos = new Vector3(EvidencePosition.X, EvidencePosition.Y, EvidencePosition.Z + 0.75f);
+                    Vector3 camPos = new Vector3(Position.X, Position.Y, Position.Z + 0.75f);
                     FocusCamOnObjectWithInterpolation(camPos, Ped);
 
                     _state = EState.InspectingEvidence;
@@ -47,9 +47,9 @@ namespace EvidenceLibrary.BaseClasses
 
                 case EState.InspectingEvidence:
 
-                    Game.DisplayHelp($"Press ~y~{_keyLeave}~s~ to quit inspecting the body.", 100);
+                    Game.DisplayHelp($"Press ~y~{KeyLeave}~s~ to quit inspecting the body.", 100);
 
-                    if (Game.IsKeyDown(_keyLeave))
+                    if (Game.IsKeyDown(KeyLeave))
                     {
                         _state = EState.InterpolateCamBack;
                     }

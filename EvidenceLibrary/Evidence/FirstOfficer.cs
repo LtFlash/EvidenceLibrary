@@ -12,7 +12,7 @@ namespace EvidenceLibrary.Evidence
 
         protected override void DisplayInfoInteractWithEvidence()
         {
-            Game.DisplayHelp($"Press ~y~{_keyInteract}~s~ to talk to the first officer at scene.", 100);
+            Game.DisplayHelp($"Press ~y~{KeyInteract}~s~ to talk to the first officer at scene.", 100);
         }
 
         protected override void WaitForFurtherInstruction()

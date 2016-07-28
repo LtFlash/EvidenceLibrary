@@ -6,7 +6,7 @@ namespace EvidenceLibrary.BaseClasses
     {
         public Ped Ped { get; protected set; }
 
-        public override Vector3 EvidencePosition
+        public override Vector3 Position
         {
             get
             {

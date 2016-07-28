@@ -15,7 +15,7 @@ namespace EvidenceLibrary.Evidence
 
         protected override void DisplayInfoInteractWithEvidence()
         {
-            Game.DisplayHelp($"Press ~y~{_keyInteract} ~s~to examine the object.", 100);
+            Game.DisplayHelp($"Press ~y~{KeyInteract} ~s~to examine the object.", 100);
         }
         private enum EStages
         {
@@ -30,7 +30,7 @@ namespace EvidenceLibrary.Evidence
             {
                 case EStages.InterpolateCam:
 
-                    Vector3 camPos = new Vector3(EvidencePosition.X, EvidencePosition.Y, EvidencePosition.Z + 0.25f);
+                    Vector3 camPos = new Vector3(Position.X, Position.Y, Position.Z + 0.25f);
 
                     FocusCamOnObjectWithInterpolation(camPos, _object);
                     Checked = true;
@@ -39,20 +39,20 @@ namespace EvidenceLibrary.Evidence
                     break;
                 case EStages.ManipulateItem:
 
-                    Game.DisplayHelp($@"Press ~y~{_keyRotate} ~s~to flip the object.~n~Press ~y~{_keyCollect} ~s~to include the item to the evidence.~n~Press ~y~{_keyLeave} ~s~to leave the object.");
+                    Game.DisplayHelp($@"Press ~y~{_keyRotate} ~s~to flip the object.~n~Press ~y~{KeyCollect} ~s~to include the item to the evidence.~n~Press ~y~{KeyLeave} ~s~to leave the object.");
 
                     if (Game.IsKeyDown(_keyRotate))
                     {
                         _object.SetRotationRoll(MathHelper.RotateHeading(_object.Rotation.Roll, 180));
                     }
-                    if (Game.IsKeyDown(_keyCollect))
+                    if (Game.IsKeyDown(KeyCollect))
                     {
                         SetEvidenceCollected();
 
                         InterpolateCameraBack();
                         stage = EStages.InterpolateCam;
                     }
-                    if(Game.IsKeyDown(_keyLeave))
+                    if(Game.IsKeyDown(KeyLeave))
                     {
                         SetEvidenceLeft();
 

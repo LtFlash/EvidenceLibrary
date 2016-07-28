@@ -3,32 +3,30 @@ using System.Collections.Generic;
 using Rage;
 using Rage.Native;
 using System.Media;
-using System.IO;
 
 namespace EvidenceLibrary.BaseClasses
 {
     public abstract class EvidenceBase : IHandleable
     {
+        //PUBLIC
         public string Id { get; private set; }
         public string Description { get; private set; }
-        public bool Collected { get; protected set; }
-        public bool Checked { get; protected set; }
-        public bool IsImportant { get; set; }
-        public bool PlaySound
+        public abstract Vector3 Position { get; }
+        public bool Collected
         {
-            set
+            get
             {
-                if (value) ActivateStage(PlaySoundEvidenceNearby);
-                else DeactivateStage(PlaySoundEvidenceNearby);
+                return _collected;
+            }
+            protected set
+            {
+                _collected = value;
+                if (IsImportant && PlaySoundImportantEvidenceCollected) _soundImportantEvidenceCollected.Play();
             }
         }
-        //private SoundPlayer _soundEvidenceFound = new SoundPlayer(@".\Plugins\EvidenceLibrary\Sounds\EvidenceNearby.wav");
-        private SoundPlayer _soundEvidenceNearby = new SoundPlayer(Properties.Resources.EvidenceNearby);
-
+        public bool Checked { get; protected set; }
+        public bool IsImportant { get; set; }
         public List<ETraces> Traces { get; } = new List<ETraces>();
-
-        public Blip Blip { get; protected set; }
-
         public float DistanceCanBeActivated
         {
             get
@@ -40,30 +38,45 @@ namespace EvidenceLibrary.BaseClasses
                 _distanceEvidenceClose = value;
             }
         }
-
-        public virtual bool CanBeActivated
+        public virtual bool CanBeActivated //TODO: rename? Close
         {
             get
             {
-                return Vector3.Distance(Game.LocalPlayer.Character.Position, EvidencePosition) <= _distanceEvidenceClose;
+                return Vector3.Distance(Game.LocalPlayer.Character.Position, Position) <= _distanceEvidenceClose;
             }
         }
 
-        public abstract Vector3 EvidencePosition { get; }
-
-        public abstract PoolHandle Handle
+        public bool PlaySoundPlayerNearby
         {
-            get;
+            set
+            {
+                if (value) ActivateStage(PlaySoundEvidenceNearby);
+                else DeactivateStage(PlaySoundEvidenceNearby);
+            }
         }
+        public bool PlaySoundImportantEvidenceCollected { get; set; } = true;
 
+        public SoundPlayer SoundPlayerNearby { set { _soundEvidenceNearby = value; } }
+        public SoundPlayer SoundImportantEvidenceCollected { set { _soundImportantEvidenceCollected = value; } }
+
+        public Blip Blip { get; protected set; }
+
+        public System.Windows.Forms.Keys KeyInteract { get; set; } = System.Windows.Forms.Keys.I;
+        public System.Windows.Forms.Keys KeyCollect { get; set; } = System.Windows.Forms.Keys.C;
+        public System.Windows.Forms.Keys KeyLeave { get; set; } = System.Windows.Forms.Keys.L;
+
+        public abstract PoolHandle Handle { get; }
+
+        //PROTECTED
         protected abstract Entity EvidenceEntity { get; }
         protected float _distanceEvidenceClose = 3f;
 
-        protected System.Windows.Forms.Keys _keyInteract = System.Windows.Forms.Keys.I;
-        protected System.Windows.Forms.Keys _keyCollect = System.Windows.Forms.Keys.C;
-        protected System.Windows.Forms.Keys _keyLeave = System.Windows.Forms.Keys.L;
 
         //PRIVATE
+        private SoundPlayer _soundEvidenceNearby = new SoundPlayer(Properties.Resources.EvidenceNearby);
+        private SoundPlayer _soundImportantEvidenceCollected = new SoundPlayer(Properties.Resources.ImportantEvidenceCollected);
+
+        private bool _collected = false;
         private GameFiber _process;
         private bool _canRun = true;
         private Camera _camera;
@@ -112,15 +125,6 @@ namespace EvidenceLibrary.BaseClasses
                 if(CanBeActivated) 
                 {
                     _soundEvidenceNearby.Play();
-                    Game.LogVerbose("EvidenceBase.PlaySoundEvidenceNearby");
-                    //PlaySound()
-                    //using (var audioStream = new MemoryStream(Properties.Resources.EvidenceNearby))
-                    //{
-                    //    using (var player = new SoundPlayer(audioStream))
-                    //    {
-                    //        player.Play();
-                    //    }
-                    //}
                 }
             }
         }
@@ -185,7 +189,7 @@ namespace EvidenceLibrary.BaseClasses
 
             DisplayInfoInteractWithEvidence();
 
-            if(Game.IsKeyDown(_keyInteract))
+            if(Game.IsKeyDown(KeyInteract))
             {
                 SwapStages(AwayOrClose, Process);
             }
@@ -216,6 +220,8 @@ namespace EvidenceLibrary.BaseClasses
             _canRun = false;
             _process.Abort();
             if (Blip.Exists()) Blip.Delete();
+            _soundEvidenceNearby.Dispose();
+            _soundImportantEvidenceCollected.Dispose();
         }
 
         protected abstract void End();
