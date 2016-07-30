@@ -68,5 +68,14 @@ namespace EvidenceLibrary.Properties {
                 return ResourceManager.GetStream("EvidenceNearby", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ImportantEvidenceCollected {
+            get {
+                return ResourceManager.GetStream("ImportantEvidenceCollected", resourceCulture);
+            }
+        }
     }
 }

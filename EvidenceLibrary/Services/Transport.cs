@@ -29,8 +29,10 @@ namespace EvidenceLibrary.Services
         private GameFiber _process;
         private bool _canRun = true;
 
-        public Transport(Ped ped, Vector3 pickupPos)
+        public Transport(Ped ped, Vector3 pickupPos, EPoliceStations dispatchFrom = EPoliceStations.Closest)
         {
+            _policeCarSpawn = dispatchFrom == EPoliceStations.Closest ? PoliceStations.GetClosestPoliceStationSpawn(pickupPos) : PoliceStations.GetPoliceStationSpawn(dispatchFrom);
+
             _positionNearTransportedPed = pickupPos;
             _ped = ped;
             _process = new GameFiber(Process);
@@ -59,7 +61,6 @@ namespace EvidenceLibrary.Services
                 {
                     case EState.CreateEntities:
 
-                        _policeCarSpawn = _policeCarInitPositions[MathHelper.GetRandomInteger(_policeCarInitPositions.Length)];
                         string _policeCarModel = _policeCarModels[MathHelper.GetRandomInteger(_policeCarModels.Length)];
 
                         _policeCar = new Vehicle(_policeCarModel, _policeCarSpawn.Position);

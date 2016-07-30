@@ -40,7 +40,7 @@ namespace EvidenceLibrary.Services
             _point = dispatchTo;
             _takeToHospital = transportToHospital;
             _dialogEMS = dialog;
-            spawn = _spawnAtScene ? _point : GetSpawn(dispatchFrom);
+            spawn = _spawnAtScene ? _point : (dispatchFrom == EHospitals.Closest ? Hospitals.GetClosestHospitalSpawn(dispatchTo.Position) : Hospitals.GetHospitalSpawn(dispatchFrom));
 
             _dialog = new Dialog(_dialogEMS);
             _process = new GameFiber(Process);
@@ -71,7 +71,6 @@ namespace EvidenceLibrary.Services
                 switch (_state)
                 {
                     case EState.CreateEntities:
-
 
                         _ambulance = new Vehicle(_ambulanceModels[MathHelper.GetRandomInteger(_ambulanceModels.Length)], spawn.Position);
                         _ambulance.Heading = spawn.Heading;
@@ -291,18 +290,6 @@ namespace EvidenceLibrary.Services
             }
 
             if (patient) patient.Delete();
-        }
-
-        private SpawnPoint GetSpawn(EHospitals dispatchFrom)
-        {
-            if(dispatchFrom == EHospitals.Closest)
-            {
-                return Hospitals.GetClosestHospitalSpawn(_patient.Position);
-            }
-            else
-            {
-                return Hospitals.GetHospitalSpawn(dispatchFrom);
-            }
         }
     }
 }

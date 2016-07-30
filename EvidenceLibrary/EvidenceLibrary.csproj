@@ -76,6 +76,7 @@
     <Compile Include="Resources\Aggregator.cs" />
     <Compile Include="Resources\MedicalCenters.cs" />
     <Compile Include="Resources\PoliceStations.cs" />
+    <Compile Include="Services\Coroner.cs" />
     <Compile Include="Services\EMS.cs" />
     <Compile Include="Evidence\DeadBody.cs" />
     <Compile Include="Dialog.cs" />
@@ -93,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Concepts.txt" />
+    <None Include="Resources\ImportantEvidenceCollected.wav" />
     <None Include="Resources\EvidenceNearby.wav" />
   </ItemGroup>
   <ItemGroup>

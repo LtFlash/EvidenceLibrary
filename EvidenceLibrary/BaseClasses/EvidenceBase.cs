@@ -228,8 +228,6 @@ namespace EvidenceLibrary.BaseClasses
 
         private void InternalProcess()
         {
-            //is close -> press key -> process -> collect -> that's it
-            //is close -> press key -> process -> leave ->
             while(_canRun)
             {
                 ExecStages();
