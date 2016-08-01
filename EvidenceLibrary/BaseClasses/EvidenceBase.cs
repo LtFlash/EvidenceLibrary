@@ -27,7 +27,7 @@ namespace EvidenceLibrary.BaseClasses
         public bool Checked { get; protected set; }
         public bool IsImportant { get; set; }
         public List<ETraces> Traces { get; } = new List<ETraces>();
-        public float DistanceCanBeActivated
+        public float ActivationDistance
         {
             get
             {
@@ -38,13 +38,17 @@ namespace EvidenceLibrary.BaseClasses
                 _distanceEvidenceClose = value;
             }
         }
-        public virtual bool CanBeActivated //TODO: rename? Close
+        public bool CanBeInspected { get; set; } = true;
+        public virtual bool IsPlayerClose
         {
             get
             {
-                return Vector3.Distance(Game.LocalPlayer.Character.Position, Position) <= _distanceEvidenceClose;
+                return Vector3.Distance(Game.LocalPlayer.Character.Position, Position) 
+                    <= _distanceEvidenceClose;
             }
         }
+
+        public string TextInteractWithEvidence { get; set; }
 
         public bool PlaySoundPlayerNearby
         {
@@ -83,6 +87,10 @@ namespace EvidenceLibrary.BaseClasses
         private Camera _gameCam;
         private bool _prevState_CanBeActivated = false; // to play sounds
 
+        private const int CAM_INTERPOLATION_TIME = 3000;
+        private const int SCREEN_FADE_TIME = 1000;
+        private const int INFO_INTERACT_TIME = 100;
+
         private List<Stage> _stages = new List<Stage>();
         private class Stage
         {
@@ -120,9 +128,9 @@ namespace EvidenceLibrary.BaseClasses
         
         private void PlaySoundEvidenceNearby()
         {
-            if(HasStateChanged(ref _prevState_CanBeActivated, CanBeActivated))
+            if(HasStateChanged(ref _prevState_CanBeActivated, IsPlayerClose))
             {
-                if(CanBeActivated) 
+                if(IsPlayerClose) 
                 {
                     _soundEvidenceNearby.Play();
                 }
@@ -185,7 +193,8 @@ namespace EvidenceLibrary.BaseClasses
         //protected - to SwapStage from derived classes
         protected void AwayOrClose()
         {
-            if (!CanBeActivated) return;
+            if (!IsPlayerClose) return;
+            if (!CanBeInspected) return;
 
             DisplayInfoInteractWithEvidence();
 
@@ -195,7 +204,10 @@ namespace EvidenceLibrary.BaseClasses
             }
         }
 
-        protected abstract void DisplayInfoInteractWithEvidence();
+        private void DisplayInfoInteractWithEvidence()
+        {
+            Game.DisplayHelp(TextInteractWithEvidence, INFO_INTERACT_TIME);
+        }
 
         protected abstract void Process();
 
@@ -245,7 +257,7 @@ namespace EvidenceLibrary.BaseClasses
 
             _gameCam = RetrieveGameCam();
             _gameCam.Active = true;
-            CamInterpolate(_gameCam, _camera, 3000, true, true, true);
+            CamInterpolate(_gameCam, _camera, CAM_INTERPOLATION_TIME, true, true, true);
             _camera.Active = true;
 
             SetLocalPlayerPropertiesWhileCamOn(true);
@@ -262,7 +274,7 @@ namespace EvidenceLibrary.BaseClasses
         {
             if (_gameCam == null || _camera == null) return;
 
-            CamInterpolate(_camera, _gameCam, 3000, true, true, true);
+            CamInterpolate(_camera, _gameCam, CAM_INTERPOLATION_TIME, true, true, true);
 
             _camera.Active = false;
             _camera.Delete();
@@ -275,7 +287,7 @@ namespace EvidenceLibrary.BaseClasses
 
         protected void DisableCustomCam()
         {
-            Game.FadeScreenOut(1000);
+            Game.FadeScreenOut(SCREEN_FADE_TIME);
 
             if (_camera.Exists())
             {
@@ -283,7 +295,7 @@ namespace EvidenceLibrary.BaseClasses
                 _camera.Delete();
             }
 
-            Game.FadeScreenIn(1000);
+            Game.FadeScreenIn(SCREEN_FADE_TIME);
 
             SetLocalPlayerPropertiesWhileCamOn(false);
         }
@@ -303,9 +315,16 @@ namespace EvidenceLibrary.BaseClasses
             return gamecam;
         }
 
-        private void CamInterpolate(Camera camfrom, Camera camto, int totaltime, bool easeLocation, bool easeRotation, bool waitForCompletion, float x = 0f, float y = 0f, float z = 0f)
+        private void CamInterpolate(
+            Camera camfrom, Camera camto, 
+            int totaltime, 
+            bool easeLocation, bool easeRotation, bool waitForCompletion, 
+            float x = 0f, float y = 0f, float z = 0f)
         {
-            NativeFunction.Natives.SET_CAM_ACTIVE_WITH_INTERP(camto, camfrom, totaltime, easeLocation, easeRotation);
+            NativeFunction.Natives.SET_CAM_ACTIVE_WITH_INTERP(
+                camto, camfrom, 
+                totaltime, easeLocation, easeRotation);
+
             if (waitForCompletion) GameFiber.Sleep(totaltime);
         }
 

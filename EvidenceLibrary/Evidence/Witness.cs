@@ -25,12 +25,13 @@ namespace EvidenceLibrary.Evidence
             _pickupPos = pickupPos;
 
             DialogRefuseTransportToStation = _dialogRefuseBeingTransported;
+            TextInteractWithEvidence = $"Press ~y~{KeyInteract} ~s~to talk to the witness.";
         }
 
-        protected override void DisplayInfoInteractWithEvidence()
-        {
-            Game.DisplayHelp($"Press ~y~{KeyInteract} ~s~to talk to the witness.", 100);
-        } 
+        //protected override void DisplayInfoInteractWithEvidence()
+        //{
+        //    Game.DisplayHelp($"Press ~y~{KeyInteract} ~s~to talk to the witness.", 100);
+        //} 
 
         private enum EState
         {
@@ -83,7 +84,7 @@ namespace EvidenceLibrary.Evidence
 
         protected virtual void WaitForFurtherInstruction()
         {
-            if (!CanBeActivated) return;
+            if (!IsPlayerClose) return;
 
             Game.DisplayHelp($"Press ~y~{KeyInteract} ~s~to release the witness.~n~Press ~y~{KeyLeave} ~s~to tell the witness to stay at scene.~n~Press ~y~{KeyCollect} ~s~to transport the witness to the station.");
 

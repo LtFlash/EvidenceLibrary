@@ -11,12 +11,14 @@ namespace EvidenceLibrary.Evidence
         public Object(string id, string description, Model model, Vector3 position) :
             base(id, description, model, position)
         {
+            TextInteractWithEvidence = $"Press ~y~{KeyInteract} ~s~to examine the object.";
         }
 
-        protected override void DisplayInfoInteractWithEvidence()
-        {
-            Game.DisplayHelp($"Press ~y~{KeyInteract} ~s~to examine the object.", 100);
-        }
+        //protected override void DisplayInfoInteractWithEvidence()
+        //{
+        //    Game.DisplayHelp(, 100);
+        //}
+
         private enum EStages
         {
             InterpolateCam,

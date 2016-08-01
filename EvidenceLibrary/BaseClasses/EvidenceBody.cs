@@ -7,17 +7,18 @@ namespace EvidenceLibrary.BaseClasses
     public abstract class EvidenceBody : EvidencePed
     {
         protected System.Windows.Forms.Keys _keyRotate = System.Windows.Forms.Keys.R;
-
+        
         public EvidenceBody(string id, string description, SpawnPoint spawn, Model model) :
             base(id, description, spawn, model)
         {
             Ped.Kill();
+            TextInteractWithEvidence = $"Press ~y~{KeyInteract}~s~ to inspect the body.";
         }
 
-        protected override void DisplayInfoInteractWithEvidence()
-        {
-            Game.DisplayHelp($"Press ~y~{KeyInteract}~s~ to inspect the body.", 100);
-        }
+        //protected override void DisplayInfoInteractWithEvidence()
+        //{
+        //    Game.DisplayHelp(TextInteractWithEvidence, 100);
+        //}
 
         private enum EState
         {
