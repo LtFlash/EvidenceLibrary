@@ -19,7 +19,11 @@ namespace EvidenceLibrary.Evidence
             "I'd be dead in 12 hours!",
         };
 
-        public Witness(string id, string description, SpawnPoint spawn, Model model, string[] dialog, Vector3 pickupPos) : base(id, description, spawn, model)
+        public Witness(
+            string id, string description, 
+            SpawnPoint spawn, Model model,
+            string[] dialog, Vector3 pickupPos) 
+            : base(id, description, spawn, model)
         {
             _dialog = new Dialog(dialog);
             _pickupPos = pickupPos;
@@ -27,11 +31,6 @@ namespace EvidenceLibrary.Evidence
             DialogRefuseTransportToStation = _dialogRefuseBeingTransported;
             TextInteractWithEvidence = $"Press ~y~{KeyInteract} ~s~to talk to the witness.";
         }
-
-        //protected override void DisplayInfoInteractWithEvidence()
-        //{
-        //    Game.DisplayHelp($"Press ~y~{KeyInteract} ~s~to talk to the witness.", 100);
-        //} 
 
         private enum EState
         {
@@ -61,13 +60,13 @@ namespace EvidenceLibrary.Evidence
                     if (Collected) return;
 
                     _dialog.StartDialog(Ped, Game.LocalPlayer.Character);
+                    Checked = true;
                     _state = EState.CheckIfDialogFinished;
 
                     break;
                 case EState.CheckIfDialogFinished:
                     if(_dialog.HasEnded)
                     {
-                        Checked = true;
                         Collected = true;
                         _state = EState.WaitForFurtherInstructions;
                     }

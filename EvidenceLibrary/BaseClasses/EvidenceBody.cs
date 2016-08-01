@@ -1,12 +1,11 @@
-﻿using System;
-using Rage;
-using EvidenceLibrary.BaseClasses;
+﻿using Rage;
+using System.Windows.Forms;
 
 namespace EvidenceLibrary.BaseClasses
 {
     public abstract class EvidenceBody : EvidencePed
     {
-        protected System.Windows.Forms.Keys _keyRotate = System.Windows.Forms.Keys.R;
+        protected Keys _keyRotate = Keys.R;
         
         public EvidenceBody(string id, string description, SpawnPoint spawn, Model model) :
             base(id, description, spawn, model)

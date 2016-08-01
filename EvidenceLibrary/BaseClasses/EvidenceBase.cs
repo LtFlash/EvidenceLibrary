@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Rage;
 using Rage.Native;
 using System.Media;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace EvidenceLibrary.BaseClasses
 {
@@ -60,14 +62,16 @@ namespace EvidenceLibrary.BaseClasses
         }
         public bool PlaySoundImportantEvidenceCollected { get; set; } = true;
 
-        public SoundPlayer SoundPlayerNearby { set { _soundEvidenceNearby = value; } }
-        public SoundPlayer SoundImportantEvidenceCollected { set { _soundImportantEvidenceCollected = value; } }
+        public SoundPlayer SoundPlayerNearby
+            { set { _soundEvidenceNearby = value; } }
+        public SoundPlayer SoundImportantEvidenceCollected
+            { set { _soundImportantEvidenceCollected = value; } }
 
-        public Blip Blip { get; protected set; }
+        public Blip Blip { get; set; }
 
-        public System.Windows.Forms.Keys KeyInteract { get; set; } = System.Windows.Forms.Keys.I;
-        public System.Windows.Forms.Keys KeyCollect { get; set; } = System.Windows.Forms.Keys.C;
-        public System.Windows.Forms.Keys KeyLeave { get; set; } = System.Windows.Forms.Keys.L;
+        public Keys KeyInteract { get; set; } = Keys.I;
+        public Keys KeyCollect { get; set; } = Keys.C;
+        public Keys KeyLeave { get; set; } = Keys.L;
 
         public abstract PoolHandle Handle { get; }
 
@@ -77,8 +81,11 @@ namespace EvidenceLibrary.BaseClasses
 
 
         //PRIVATE
-        private SoundPlayer _soundEvidenceNearby = new SoundPlayer(Properties.Resources.EvidenceNearby);
-        private SoundPlayer _soundImportantEvidenceCollected = new SoundPlayer(Properties.Resources.ImportantEvidenceCollected);
+        private SoundPlayer _soundEvidenceNearby 
+            = new SoundPlayer(Properties.Resources.EvidenceNearby);
+
+        private SoundPlayer _soundImportantEvidenceCollected 
+            = new SoundPlayer(Properties.Resources.ImportantEvidenceCollected);
 
         private bool _collected = false;
         private GameFiber _process;
@@ -147,7 +154,9 @@ namespace EvidenceLibrary.BaseClasses
             }
         }
 
-        public void CreateBlip(System.Drawing.Color color, BlipSprite sprite = BlipSprite.Health, float scale = 0.25f)
+        public void CreateBlip(
+            Color color, BlipSprite sprite = BlipSprite.Health,
+            float scale = 0.25f)
         {
             RemoveBlip();
 
